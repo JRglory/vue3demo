@@ -1,21 +1,5 @@
 import service from "./request";
-interface GoodsPrice {
-  goodsPrice: number;
-}
-interface CreateGoods extends GoodsPrice {
-  goodsName: string;
-  goodsDescription: string;
-  goodsImage: string;
-}
-interface UpdateGoods extends GoodsPrice {
-  sell: boolean;
-}
-interface SearchGoods {
-  page: number;
-  size: number;
-  sellFlag: boolean | null;
-  search: string;
-}
+import type { CreateGoods, UpdateGoods, SearchGoods } from "@/type/goodsAbout";
 //创建商品
 export function createGoods(token: string, createData: CreateGoods) {
   return service({

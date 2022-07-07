@@ -31,14 +31,17 @@
     </el-table-column>
     <el-table-column align="right">
       <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-          >Edit</el-button
+        <el-button
+          size="small"
+          type="primary"
+          @click="handleEdit(scope.$index, scope.row)"
+          >编辑</el-button
         >
         <el-button
           size="small"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)"
-          >Delete</el-button
+          >删除</el-button
         >
       </template>
     </el-table-column>
@@ -46,7 +49,7 @@
   <Pagination :total="pageAbout?.total" :pageSize="pageAbout?.size" />
 </template>
 <script lang="ts" setup>
-import { searchGoods, deleteGoods } from "@/api/goodsAbout";
+import { searchGoods, deleteGoods, updateGoods } from "@/api/goodsAbout";
 import { ref, computed, onMounted, reactive } from "vue";
 import Pagination from "@/components/Pagination.vue";
 import { ElMessage } from "element-plus";
@@ -83,8 +86,20 @@ let searchGoodsList: SearchGoodsList = {
 const goodName = ref("");
 const pageAbout = ref<PageAbout>();
 //处理编辑操作
-const handleEdit = (index: number, row: GoodsInformation) => {
-  console.log(index, row);
+const handleEdit = async (index: number, row: GoodsInformation) => {
+  let result = await updateGoods(
+    localStorage.getItem("token")!,
+    { goodsPrice: row.goodsprice, sell: row.sell },
+    row.goodsname
+  );
+  if (result.status == 200) {
+    if (result.data.message == "success") {
+      ElMessage({
+        type: "success",
+        message: "编辑商品成功",
+      });
+    }
+  }
 };
 //处理删除操作
 const handleDelete = async (index: number, row: GoodsInformation) => {

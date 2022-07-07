@@ -5,6 +5,7 @@ const service = axios.create({
     "https://www.fastmock.site/mock/a15e6649230dc9a88d34b842f92b9923/api",
   timeout: 5000,
 });
+//请求拦截
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     return config;
@@ -59,6 +60,7 @@ const showStatus = (status: number) => {
   }
   return `${message}，请检查网络或联系管理员！`;
 };
+//响应拦截
 service.interceptors.response.use((response: AxiosResponse) => {
   const status = response.status;
   let msg = "";

@@ -1,13 +1,5 @@
 import service from "./request";
-interface LoginRequest {
-  username: string;
-  password: string;
-}
-interface RegisterRequest {
-  username: string;
-  pass: string;
-  checkPass: string;
-}
+import type {LoginRequest,RegisterRequest} from "@/type/userAbout"
 //用户登录
 export function userLogin(data: LoginRequest) {
   return service({
