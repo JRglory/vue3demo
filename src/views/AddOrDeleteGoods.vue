@@ -53,29 +53,9 @@ import { searchGoods, deleteGoods, updateGoods } from "@/api/goodsAbout";
 import { ref, computed, onMounted, reactive } from "vue";
 import Pagination from "@/components/Pagination.vue";
 import { ElMessage } from "element-plus";
-//User数据接口
-interface GoodsInformation {
-  goodsname: string;
-  goodsdescription: string;
-  goodsprice: number;
-  goodsimage: string;
-  sell: boolean;
-}
-//页数相关接口
-interface PageAbout {
-  model: string;
-  current: number;
-  total: number;
-  total_page: number;
-  size: number;
-}
-//查询商品接口
-interface SearchGoodsList {
-  page: number;
-  size: number;
-  sellFlag: boolean | null;
-  search: string;
-}
+import type { SearchGoodsList, PageAbout } from "@/type/goodsAbout";
+import type { GoodsInformation } from "@/type/userAbout";
+
 let searchGoodsList: SearchGoodsList = {
   page: 1,
   size: 20,

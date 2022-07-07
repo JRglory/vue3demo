@@ -15,3 +15,20 @@ export interface SearchGoods {
   sellFlag: boolean | null;
   search: string;
 }
+
+//查询商品接口
+export interface SearchGoodsList {
+  page: number;
+  size: number;
+  sellFlag: boolean | null;
+  search: string;
+}
+
+//页数相关接口
+export interface PageAbout {
+  model: string;
+  current: number;
+  total: number;
+  total_page: number;
+  size: number;
+}
