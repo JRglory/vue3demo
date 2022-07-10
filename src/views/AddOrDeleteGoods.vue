@@ -7,13 +7,28 @@
     <el-col :span="8"
       ><div class="grid-content ep-bg-purple" />
       <el-button type="primary">搜索</el-button>
-      <el-button type="primary">新建商品</el-button>
+      <el-button type="primary" @click="addNewGood">新建商品</el-button>
     </el-col>
   </el-row>
   <el-table :data="goodsTableData" style="width: 100%">
-    <el-table-column label="商品名称" prop="goodsname" />
-    <el-table-column label="商品描述" prop="goodsdescription" />
-    <el-table-column label="商品价格" prop="goodsprice" />
+    <el-table-column label="商品名称" prop="goodsname">
+      <template #default="scope">
+        <!-- <span>{{ scope.row.goodsname }}</span> -->
+        <el-input v-model="scope.row.goodsname"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品描述" prop="goodsdescription">
+      <template #default="scope">
+        <!-- <span>{{ scope.row.goodsdescription }}</span> -->
+        <el-input v-model="scope.row.goodsdescription"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品价格" prop="goodsprice">
+      <template #default="scope">
+        <!-- <span>{{ scope.row.goodsprice }}</span> -->
+        <el-input v-model="scope.row.goodsprice"></el-input>
+      </template>
+    </el-table-column>
     <el-table-column label="商品图片" prop="goodsimage">
       <template #default="scope">
         <img
@@ -25,8 +40,15 @@
     </el-table-column>
     <el-table-column label="商品状态" prop="sell">
       <template #default="scope">
-        <el-button type="success" v-if="scope.row.sell == true">上架</el-button>
-        <el-button type="error" v-else>下架</el-button>
+        <el-button
+          type="success"
+          v-if="scope.row.sell == true"
+          @click="scope.row.sell = !scope.row.sell"
+          >上架</el-button
+        >
+        <el-button type="error" v-else @click="scope.row.sell = !scope.row.sell"
+          >下架</el-button
+        >
       </template>
     </el-table-column>
     <el-table-column align="right">
@@ -49,19 +71,37 @@
   <Pagination :total="pageAbout?.total" :pageSize="pageAbout?.size" />
 </template>
 <script lang="ts" setup>
-import { searchGoods, deleteGoods, updateGoods } from "@/api/goodsAbout";
+import {
+  searchGoods,
+  deleteGoods,
+  updateGoods,
+  createGoods,
+} from "@/api/goodsAbout";
 import { ref, computed, onMounted, reactive } from "vue";
 import Pagination from "@/components/Pagination.vue";
 import { ElMessage } from "element-plus";
-import type { SearchGoodsList, PageAbout } from "@/type/goodsAbout";
+import type {
+  SearchGoodsList,
+  PageAbout,
+  CreateGoods,
+} from "@/type/goodsAbout";
 import type { GoodsInformation } from "@/type/userAbout";
 
+//新建商品信息列表
+let addGoodList: CreateGoods = {
+  goodsName: "",
+  goodsDescription: "",
+  goodsImage: "",
+  goodsPrice: 123,
+};
+//搜索商品列表
 let searchGoodsList: SearchGoodsList = {
   page: 1,
   size: 20,
   sellFlag: true,
-  search: "商品",
+  search: "",
 };
+const token = localStorage.getItem("token");
 //要搜索的商品名称
 const goodName = ref("");
 const pageAbout = ref<PageAbout>();
@@ -78,18 +118,56 @@ const handleEdit = async (index: number, row: GoodsInformation) => {
         type: "success",
         message: "编辑商品成功",
       });
+    } else {
+      if (result.data.errors.datas[0].message == "商品不存在") {
+        ElMessage({
+          type: "error",
+          message: "商品不存在",
+        });
+      }
+      if (result.data.errors.datas[0].message == "修改失败，稍后再试") {
+        ElMessage({
+          type: "error",
+          message: "修改失败，稍后再试",
+        });
+      }
+      if (result.data.errors.datas[0].message == "token异常") {
+        ElMessage({
+          type: "error",
+          message: "token异常",
+        });
+      }
     }
   }
 };
 //处理删除操作
-const handleDelete = async (index: number, row: GoodsInformation) => {
-  let result = await deleteGoods(localStorage.getItem("token")!, row.goodsname);
+const handleDelete = async (index: number, id: string) => {
+  let result = await deleteGoods(localStorage.getItem("token")!, id);
   if (result.status == 200) {
     if (result.data.message == "success") {
       ElMessage({
         type: "success",
         message: "删除商品成功",
       });
+    } else {
+      if (result.data.errors.datas[0].message == "商品不存在") {
+        ElMessage({
+          type: "error",
+          message: "商品不存在",
+        });
+      }
+      if (result.data.errors.datas[0].message == "删除商品失败，稍后再试") {
+        ElMessage({
+          type: "error",
+          message: "删除商品失败，稍后再试",
+        });
+      }
+      if (result.data.errors.datas[0].message == "token异常") {
+        ElMessage({
+          type: "error",
+          message: "token异常",
+        });
+      }
     }
   }
 };
@@ -97,13 +175,47 @@ const handleDelete = async (index: number, row: GoodsInformation) => {
 let goodsTableData = ref<GoodsInformation[]>();
 //获取商品信息
 const getGoodsInformation = async () => {
-  let result = await searchGoods(
-    localStorage.getItem("token")!,
-    searchGoodsList
-  );
+  let result = await searchGoods(token!, searchGoodsList);
   if (result.status == 200) {
     goodsTableData.value = result.data.result.data;
     pageAbout.value = result.data.page;
+  } else {
+    if (result.data.errors.datas[0].message == "token异常") {
+      ElMessage({
+        type: "error",
+        message: "token异常",
+      });
+    }
+  }
+};
+//创建商品操作
+const addNewGood = async () => {
+  let result = await createGoods(token!, addGoodList);
+  if (result.status == 200) {
+    if (result.data.message == "success") {
+      ElMessage({
+        type: "success",
+        message: "创建商品成功",
+      });
+    } else {
+      if (result.data.errors.datas[0].message == "创建商品失败，稍后再试") {
+        ElMessage({
+          type: "error",
+          message: "创建商品失败，稍后再试",
+        });
+      }
+      if (result.data.errors.datas[0].code == 401) {
+        ElMessage({
+          type: "error",
+          message: "token异常",
+        });
+      }
+    }
+  } else {
+    ElMessage({
+      type: "error",
+      message: "创建商品失败",
+    });
   }
 };
 onMounted(() => {

@@ -41,7 +41,7 @@ export function deleteGoods(token: string, id: string) {
 //查询商品
 export function searchGoods(token: string, searchData: SearchGoods) {
   return service({
-    url: `/v1/goods`,
+    url: `/v2/goods`,
     method: "get",
     headers: { Authorization: token },
     params: {

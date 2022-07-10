@@ -123,6 +123,19 @@ const submitLoginForm = (formEl: FormInstance | undefined) => {
         });
         localStorage.setItem("token", result.data.result.token);
         router.push("addOrDeleteGoods");
+      } else {
+        if (result.data.errors.datas[0].message == "账号不存在") {
+          ElMessage({
+            type: "error",
+            message: "账号不存在",
+          });
+        }
+        if(result.data.errors.data[0].message == "账号或密码不正确"){
+          ElMessage({
+            type:"error",
+            message:"账号或密码不正确"
+          })
+        }
       }
     } else {
       ElMessage({
@@ -184,9 +197,19 @@ const submitRegisterForm = (formEl: FormInstance | undefined) => {
           message: "注册成功，请登录",
         });
         isLogin.value = !isLogin.value;
+      }else{
+        if(result.data.model == "errors"){
+          ElMessage({
+            type:"error",
+            message:"账号已经被使用"
+          })
+        }
       }
     } else {
-      console.log("error submit!");
+      ElMessage({
+        type:"error",
+        message:"注册失败"
+      })
       return false;
     }
   });

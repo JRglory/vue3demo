@@ -13,7 +13,7 @@ export interface SearchGoods {
   page: number;
   size: number;
   sellFlag: boolean | null;
-  search: string;
+  search: string | null;
 }
 
 //查询商品接口
@@ -21,7 +21,7 @@ export interface SearchGoodsList {
   page: number;
   size: number;
   sellFlag: boolean | null;
-  search: string;
+  search: null | string;
 }
 
 //页数相关接口
