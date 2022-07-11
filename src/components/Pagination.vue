@@ -1,12 +1,24 @@
 <template>
   <div>
-    <el-pagination
+    <!-- <el-pagination
       v-model:currentPage="currentPage"
       v-model:page-size="props.pageSize"
       :small="small"
       :disabled="disabled"
       :background="background"
       layout="prev, pager, next, jumper"
+      :total="props.total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    /> -->
+    <el-pagination
+      v-model:currentPage="currentPage"
+      v-model:page-size="props.pageSize"
+      :page-sizes="[10, 20, 30, 40]"
+      :small="small"
+      :disabled="disabled"
+      :background="background"
+      layout=" sizes, prev, pager, next, jumper,->,total"
       :total="props.total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"

@@ -6,6 +6,20 @@
     </el-col>
     <el-col :span="8"
       ><div class="grid-content ep-bg-purple" />
+      <el-select
+        v-model="selectGoodsValue"
+        class="m-2"
+        placeholder="选择要查找的商品类型"
+        size="middle"
+      >
+        <el-option
+          v-for="item in selectGoodsOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+      &nbsp;
       <el-button type="primary">搜索</el-button>
       <el-button type="primary" @click="addNewGood">新建商品</el-button>
     </el-col>
@@ -86,7 +100,22 @@ import type {
   CreateGoods,
 } from "@/type/goodsAbout";
 import type { GoodsInformation } from "@/type/userAbout";
-
+//选择商品的类型（下架，上架，全部）
+let selectGoodsValue = ref();
+const selectGoodsOptions = [
+  {
+    value: "all",
+    label: "全部",
+  },
+  {
+    value: "true",
+    label: "上架",
+  },
+  {
+    value: "false",
+    label: "下架",
+  },
+];
 //新建商品信息列表
 let addGoodList: CreateGoods = {
   goodsName: "",
